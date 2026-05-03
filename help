@@ -1,0 +1,94 @@
+Based on the provided PDF content, here is a summary of the IT Security notes, organized by topic, along with the exam questions and their solutions.
+
+### System Recovery & Basics
+- **Resetting Root Password (from GRUB):**
+    1.  Interrupt boot in GRUB, edit the kernel line, and add `rd.break` before `root=`.
+    2.  Remount `/sysroot` as read-write: `mount -o remount,rw /sysroot`
+    3.  Change to the system environment: `chroot /sysroot/`
+    4.  Change the root password: `passwd`
+    5.  Relabel SELinux contexts: `touch /.autorelabel`
+    6.  Exit twice (type `exit` twice).
+
+- **Basic Linux Commands:**
+    - `ls`: Show files.
+    - `ls -a`: Show all files including hidden.
+    - `ls -l`: Show detailed list.
+    - `ls -i`: Show inode number.
+    - `ls -d`: Show directory properties, not contents.
+    - `pwd`: Print working directory.
+    - `echo hello > message.txt`: Write text to a file.
+    - `stat`: Show detailed file information.
+
+- **File Permissions (DAC Model):**
+    - Format: `-` (file) or `d` (directory) + `rwx` for Owner (u), Group (g), Others (o).
+    - **`chmod` command:**
+        - Symbolic: `chmod o+x message.txt`, `chmod ug-r message.txt`, `chmod u=rw,go=r message.txt`
+        - Numeric (Octal): `4` (read), `2` (write), `1` (execute). `chmod 000 message.txt` removes all permissions.
+
+### Exam Environment Setup
+- **Port Forwarding (VirtualBox):** Add a rule in VM network settings to forward Host Port `10022` to Guest Port `22`.
+- **Connecting via Putty:**
+    - Host Name (IP address): `localhost`
+    - Port: `10022`
+    - Connection type: `SSH`
+    - Log in as `root`.
+- **Starting the Exam:** Use the `exam` command. One command prepares the system, and another submits answers. Unique IDs are provided on the exam website.
+
+### Exam Questions & Solutions
+1.  **Find file with non-root owner:**
+    `find /root/86344/ -not -user root > /root/86344.ans`
+2.  **Create user and lock password:**
+    `useradd user86315`
+    `passwd -l user86315`
+3.  **Verify file signature:** Loop through public keys until "Verified OK" is returned.
+    `openssl dgst -verify /root/Carol-86302.pub.pem -signature /root/contract-86302.sha256.signature -sha256 /root/contract-86302.txt`
+    `echo Carol > /root/86302.ans`
+4.  **Download & mount a LUKS encrypted filesystem:** The notes provide the download command but the steps for mounting are incomplete. They mention using the password `5d3a8e1b` and copying contents to `/root`.
+5.  **Decrypt file (aes-128-cbc):**
+    `openssl aes-128-cbc -d -in /root/86261.enc -K 86261 -iv 0 > /root/86261.txt`
+6.  **Decrypt file (des-ede):**
+    `openssl des-ede -d -in /root/86257.enc -k 86257 > /root/86257.txt`
+7.  **Sign a file with a private key:** Create a file `k` and paste the private key block.
+    `openssl dgst -sign k -sha256 -out /root/86247.sign /root/86247.txt`
+8.  **Set permissions to read-only:**
+    `chmod 444 /root/86237.txt`
+9.  **Set User ACL entry:**
+    `setfacl -m u:operator:r /root/86224.txt`
+10. **Change file owner:**
+    `chown operator /root/86211.txt`
+11. **Create a file of specific size:**
+    `dd if=/dev/zero of=/root/86198.dat bs=861980 count=1`
+12. **Generate an RSA private key:**
+    `openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:1024 -out /root/86191.pem`
+13. **Partition, format, and mount a disk:**
+    `fdisk /dev/sdc` (then `n`, Enter x5, `w`)
+    `mkfs.ext2 /dev/sdc1`
+    `mount -o ro /dev/sdc1 /mnt`
+14. **Allow login as root with private key:** Create a file `kk`, paste key. Create `.ssh` dir, generate public key to `authorized_keys`.
+    `mkdir .ssh`
+    `ssh-keygen -y -f kk > .ssh/authorized_keys`
+15. **Create user and SSH key:**
+    `useradd user160184`
+    `su - user160184 -c "ssh-keygen -t rsa -N '' -f /home/user160184/.ssh/id_rsa"`
+16. **Find directory with sticky bit set:**
+    `find /root/160161/ -perm /1000 > /root/160171.ans`
+17. **Manage password aging:**
+    `chage operator -M 100` (The solution to set an exact expiry date is missing from the notes).
+18. **Set specific complex permissions:** Matches the pattern `-r--rws--T`.
+    `chmod 3470 /root/160101.txt`
+19. **Delete all ACL entries:**
+    `setfacl -b /root/160093.txt`
+20. **Set file owner and group:**
+    `chown operator:users /root/160076.txt`
+21. **Copy first part of a file:**
+    `dd if=/root/160067.dat of=/root/160067.part bs=70 count=1`
+22. **Generate an RSA private key:**
+    `openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:1024 -out /root/160060.pem`
+23. **Create and mount LUKS encrypted filesystem:**
+    `cryptsetup luksFormat /dev/sdc` (Password: `appleAPPLEapple`)
+    `cryptsetup luksOpen /dev/sdc x`
+    `mkfs.xfs /dev/mapper/x`
+    `mount /dev/mapper/x /mnt`
+24. **Verify file signature:**
+    `openssl dgst -verify /root/Eve-160147.pub.pem -signature /root/contract-160147.sha256.signature -sha256 /root/contract-160147.txt`
+    `echo Eve > /root/160147.ans`
