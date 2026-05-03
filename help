@@ -92,3 +92,4 @@ Based on the provided PDF content, here is a summary of the IT Security notes, o
 24. **Verify file signature:**
     `openssl dgst -verify /root/Eve-160147.pub.pem -signature /root/contract-160147.sha256.signature -sha256 /root/contract-160147.txt`
     `echo Eve > /root/160147.ans`
+https://chat.deepseek.com/share/vprgjx5j4wgsnmlk0x
